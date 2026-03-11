@@ -645,6 +645,7 @@ h3 {
   }
 
   .reading-panel {
+    order: 3;
     grid-template-columns: 1fr;
   }
 }
