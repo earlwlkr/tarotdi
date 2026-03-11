@@ -20,6 +20,7 @@ export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
         } as CSSProperties
       }
     >
+      <div className="tarot-card__reveal-flare" />
       <div className="tarot-card__frame" />
       <div className="tarot-card__halo" />
       <div className="tarot-card__grain" />

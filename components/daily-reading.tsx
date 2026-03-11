@@ -10,6 +10,8 @@ type DailyReadingProps = {
   formattedDate: string;
 };
 
+const SHUFFLE_DURATION_MS = 1600;
+
 export function DailyReadingExperience({ reading, formattedDate }: DailyReadingProps) {
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -25,7 +27,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
     const revealTimer = window.setTimeout(() => {
       setIsRevealed(true);
       setIsShuffling(false);
-    }, 1800);
+    }, SHUFFLE_DURATION_MS);
 
     return () => window.clearTimeout(revealTimer);
   }, [isShuffling]);
@@ -75,8 +77,8 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         </p>
         <div className="hero-meta">
           <span>{formattedDate}</span>
-          <span>{reading.card.arcana}</span>
-          <span>{reading.isReversed ? "Reversed draw" : "Upright draw"}</span>
+          {isRevealed ? <span>{reading.card.arcana}</span> : null}
+          {isRevealed ? <span>{reading.isReversed ? "Reversed draw" : "Upright draw"}</span> : null}
         </div>
         <div className="hero-actions">
           <button className="button button--primary" onClick={handleShuffle} type="button" disabled={isShuffling}>
@@ -89,8 +91,8 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         <div className="ritual-guide" aria-label="Reading guide">
           <div>
             <p className="reading-panel__label">Card of the day</p>
-            <strong>{reading.card.name}</strong>
-            <p>{reading.card.suit}</p>
+            <strong>{isRevealed ? reading.card.name : "Hidden until reveal"}</strong>
+            <p>{isRevealed ? reading.card.suit : "Shuffle the deck to uncover the draw."}</p>
           </div>
           <div>
             <p className="reading-panel__label">When revealed</p>
@@ -100,7 +102,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         </div>
       </section>
 
-      <section className="stage">
+      <section className={`stage ${isShuffling ? "is-shuffling" : ""}`}>
         <div className="stage__glow" />
         <div className={`deck ${isShuffling ? "is-shuffling" : ""} ${isRevealed ? "is-hidden" : ""}`}>
           <span className="deck__card deck__card--one" />
