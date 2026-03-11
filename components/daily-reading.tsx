@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import type { DailyReading } from "@/lib/tarot";
+import { getMeaningParagraphs, type DailyReading } from "@/lib/tarot";
 import { TarotCardFace } from "@/components/tarot-card";
 
 type DailyReadingProps = {
@@ -14,6 +14,8 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
+  const activeKeywords = reading.isReversed ? reading.card.reversedKeywords : reading.card.uprightKeywords;
+  const meaningParagraphs = getMeaningParagraphs(reading.card, reading.isReversed);
 
   useEffect(() => {
     if (!isShuffling) {
@@ -110,20 +112,21 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
       </section>
 
       <section className={`reading-panel ${isRevealed ? "is-visible" : ""}`}>
-        <div>
-          <p className="reading-panel__label">Meaning</p>
-          <h3>{reading.card.name}</h3>
-          <p>{reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning}</p>
-        </div>
-        <div>
-          <p className="reading-panel__label">Reflection</p>
-          <p>{reading.card.reflection}</p>
-        </div>
-        <div>
-          <p className="reading-panel__label">Card details</p>
-          <p>
-            {reading.card.arcana} · {reading.card.number} · {reading.isReversed ? "Reversed" : "Upright"}
-          </p>
+        <p className="reading-panel__label">Reading</p>
+        <h3>{reading.card.name}</h3>
+        <p className="reading-panel__label">Key themes</p>
+        <ul className="meaning-tags" aria-label="Key themes">
+          {activeKeywords.map((keyword) => (
+            <li key={keyword}>{keyword}</li>
+          ))}
+        </ul>
+        <p className="reading-panel__label">Reflection</p>
+        <p>{reading.card.reflection}</p>
+        <p className="reading-panel__label">Meaning</p>
+        <div className="meaning-copy">
+          {meaningParagraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </div>
       </section>
     </div>
