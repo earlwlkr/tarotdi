@@ -1,10 +1,17 @@
 :root {
-  --bg: #0a0911;
-  --bg-elevated: rgba(13, 11, 22, 0.78);
-  --text: #f5ecdc;
-  --muted: rgba(245, 236, 220, 0.7);
+  --bg: #06070b;
+  --bg-deep: #090b11;
+  --bg-elevated: rgba(12, 16, 25, 0.72);
+  --panel: rgba(18, 24, 34, 0.7);
+  --text: #f7f1e2;
+  --muted: rgba(247, 241, 226, 0.72);
   --line: rgba(255, 255, 255, 0.12);
-  --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  --line-strong: rgba(255, 244, 214, 0.22);
+  --gold: #f0c57c;
+  --gold-soft: rgba(240, 197, 124, 0.22);
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.46);
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-body: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 * {
@@ -14,9 +21,10 @@
 html {
   min-height: 100%;
   background:
-    radial-gradient(circle at top, rgba(140, 91, 255, 0.18), transparent 24rem),
-    radial-gradient(circle at 80% 20%, rgba(255, 157, 80, 0.18), transparent 22rem),
-    linear-gradient(180deg, #120f1d 0%, #090810 100%);
+    radial-gradient(circle at top, rgba(106, 74, 181, 0.24), transparent 28rem),
+    radial-gradient(circle at 78% 16%, rgba(25, 125, 176, 0.22), transparent 24rem),
+    radial-gradient(circle at 50% 120%, rgba(219, 150, 72, 0.14), transparent 28rem),
+    linear-gradient(180deg, #11151f 0%, #080a10 46%, #050608 100%);
 }
 
 body {
@@ -25,9 +33,20 @@ body {
   color: var(--text);
   font-family: var(--font-body), sans-serif;
   background:
-    radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 100%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     transparent;
-  background-size: 20px 20px;
+  background-size: 24px 24px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(6, 7, 11, 0), rgba(6, 7, 11, 0.42));
+  pointer-events: none;
 }
 
 a {
@@ -38,11 +57,25 @@ button {
   font: inherit;
 }
 
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display), serif;
+  font-weight: 600;
+  line-height: 0.93;
+  letter-spacing: -0.04em;
+}
+
+p {
+  margin: 0;
+}
+
 .page-shell {
   position: relative;
-  overflow: hidden;
+  overflow: clip;
   min-height: 100vh;
-  padding: 32px 20px 48px;
+  padding: 32px 20px 56px;
 }
 
 .page-shell--reading {
@@ -50,37 +83,61 @@ button {
   place-items: center;
 }
 
-.aurora {
-  position: absolute;
-  inset: auto;
-  width: 28rem;
-  height: 28rem;
-  border-radius: 999px;
-  filter: blur(80px);
-  opacity: 0.35;
+.aurora,
+.starfield {
   pointer-events: none;
+  position: absolute;
+}
+
+.aurora {
+  width: 32rem;
+  height: 32rem;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.4;
+  animation: drift 16s ease-in-out infinite alternate;
 }
 
 .aurora--left {
-  top: -8rem;
-  left: -8rem;
-  background: rgba(93, 92, 222, 0.7);
+  top: -10rem;
+  left: -10rem;
+  background: rgba(89, 74, 190, 0.82);
 }
 
 .aurora--right {
   right: -10rem;
   bottom: 10%;
-  background: rgba(245, 158, 11, 0.55);
+  background: rgba(225, 153, 78, 0.58);
+  animation-duration: 19s;
+}
+
+.aurora--center {
+  inset: auto auto 18% 38%;
+  width: 22rem;
+  height: 22rem;
+  background: rgba(84, 154, 167, 0.26);
+  animation-duration: 22s;
+}
+
+.starfield {
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 18%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 52% 62%, rgba(240, 197, 124, 0.36) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 32% 78%, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.5px);
+  opacity: 0.85;
 }
 
 .experience,
 .share-view {
   position: relative;
   z-index: 1;
-  max-width: 1180px;
+  width: min(100%, 1180px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
   gap: 32px;
   align-items: center;
 }
@@ -88,77 +145,102 @@ button {
 .hero-copy,
 .reading-panel,
 .share-view__copy {
-  padding: 28px;
+  position: relative;
+  padding: 32px;
   border: 1px solid var(--line);
-  border-radius: 28px;
-  background: var(--bg-elevated);
-  backdrop-filter: blur(22px);
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 18%),
+    var(--bg-elevated);
+  backdrop-filter: blur(26px);
   box-shadow: var(--shadow);
+}
+
+.hero-copy::after,
+.reading-panel::after,
+.share-view__copy::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
 }
 
 .eyebrow,
 .reading-panel__label {
-  margin: 0 0 12px;
-  color: #f6c56d;
+  color: var(--gold);
   text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: 0.74rem;
+  letter-spacing: 0.26em;
+  font-size: 0.72rem;
 }
 
-h1,
-h2,
-h3 {
-  margin: 0;
-  font-family: var(--font-display), serif;
-  font-weight: 600;
-  line-height: 0.95;
+.eyebrow {
+  margin-bottom: 12px;
 }
 
 h1 {
-  font-size: clamp(3.5rem, 6vw, 6.5rem);
+  max-width: 10ch;
+  font-size: clamp(3.6rem, 8vw, 6.6rem);
+}
+
+h3 {
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  margin-top: 12px;
 }
 
 .lede {
+  max-width: 36rem;
+  margin-top: 20px;
   color: var(--muted);
   font-size: 1.05rem;
-  line-height: 1.7;
-  max-width: 34rem;
-  margin: 18px 0 0;
+  line-height: 1.8;
 }
 
 .hero-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin: 24px 0 0;
+  margin-top: 26px;
 }
 
 .hero-meta span {
   border: 1px solid var(--line);
-  padding: 10px 14px;
+  padding: 11px 15px;
   border-radius: 999px;
-  color: var(--muted);
-  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 245, 226, 0.82);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin: 28px 0 0;
+  margin-top: 28px;
 }
 
 .button {
   min-width: 10rem;
-  padding: 14px 20px;
+  padding: 14px 22px;
   border-radius: 999px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
 }
 
 .button:hover:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
 .button:disabled {
@@ -167,21 +249,65 @@ h1 {
 }
 
 .button--primary {
-  color: #150f0a;
-  background: linear-gradient(135deg, #f8d58d, #f5a357);
+  color: #1a1307;
+  background: linear-gradient(135deg, #f7d99c, #eca45a);
+  box-shadow: 0 16px 40px rgba(236, 164, 90, 0.28);
+}
+
+.button--primary:hover:not(:disabled) {
+  box-shadow: 0 20px 48px rgba(236, 164, 90, 0.34);
 }
 
 .button--ghost {
   color: var(--text);
-  border-color: var(--line);
+  border-color: var(--line-strong);
   background: rgba(255, 255, 255, 0.04);
+}
+
+.button--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ritual-guide {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.ritual-guide > div {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--panel);
+}
+
+.ritual-guide strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.ritual-guide p:last-child {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.65;
 }
 
 .stage {
   position: relative;
-  min-height: 740px;
+  min-height: 760px;
   display: grid;
   place-items: center;
+}
+
+.stage__glow {
+  position: absolute;
+  inset: 14% 12%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(126, 103, 223, 0.18), transparent 62%);
+  filter: blur(24px);
 }
 
 .deck {
@@ -189,7 +315,7 @@ h1 {
   inset: 0;
   display: grid;
   place-items: center;
-  transition: opacity 220ms ease;
+  transition: opacity 240ms ease;
 }
 
 .deck.is-hidden {
@@ -199,47 +325,52 @@ h1 {
 
 .deck__card {
   position: absolute;
-  width: min(72vw, 360px);
+  width: min(72vw, 364px);
   aspect-ratio: 0.64;
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   background:
-    radial-gradient(circle at 50% 32%, rgba(244, 194, 103, 0.4), transparent 28%),
-    linear-gradient(135deg, #22162f, #110e18 55%, #2c1d1d);
-  box-shadow: var(--shadow);
+    radial-gradient(circle at 50% 28%, rgba(240, 197, 124, 0.3), transparent 22%),
+    linear-gradient(150deg, #192131 0%, #0f1119 56%, #2b1e1d 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    var(--shadow);
 }
 
 .deck__card::before {
   content: "";
   position: absolute;
   inset: 14px;
-  border-radius: 22px;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .deck__card::after {
   content: "";
   position: absolute;
-  inset: 28% 28%;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 197, 109, 0.45);
-  box-shadow: 0 0 45px rgba(245, 197, 109, 0.22);
+  inset: 18px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.02), transparent 62%),
+    conic-gradient(from 0deg, rgba(240, 197, 124, 0.22), transparent, rgba(111, 143, 218, 0.2), transparent, rgba(240, 197, 124, 0.22));
+  mix-blend-mode: screen;
+  opacity: 0.66;
 }
 
 .deck__card--one {
-  transform: rotate(-12deg) translate(-64px, 18px);
+  transform: rotate(-12deg) translate(-70px, 26px);
 }
 
 .deck__card--two {
-  transform: rotate(0deg);
+  transform: translateY(-4px);
 }
 
 .deck__card--three {
-  transform: rotate(12deg) translate(64px, 18px);
+  transform: rotate(12deg) translate(70px, 26px);
 }
 
 .deck.is-shuffling .deck__card--one {
-  animation: shuffle-left 1.8s ease forwards;
+  animation: shuffle-left 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .deck.is-shuffling .deck__card--two {
@@ -247,25 +378,29 @@ h1 {
 }
 
 .deck.is-shuffling .deck__card--three {
-  animation: shuffle-right 1.8s ease forwards;
+  animation: shuffle-right 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .tarot-card {
   position: relative;
-  width: min(72vw, 360px);
+  width: min(72vw, 364px);
   aspect-ratio: 0.64;
-  border-radius: 30px;
+  border-radius: 32px;
   padding: 20px;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--card-glow) 55%, transparent), transparent 30%),
-    linear-gradient(180deg, rgba(7, 10, 19, 0.98), rgba(19, 11, 24, 0.98));
-  border: 1px solid color-mix(in srgb, var(--card-accent) 40%, rgba(255, 255, 255, 0.15));
+    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--card-glow) 58%, transparent), transparent 28%),
+    linear-gradient(180deg, rgba(9, 12, 20, 0.99), rgba(16, 11, 23, 0.99));
+  border: 1px solid color-mix(in srgb, var(--card-accent) 42%, rgba(255, 255, 255, 0.15));
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     0 26px 90px color-mix(in srgb, var(--card-accent) 22%, transparent);
   opacity: 0;
-  transform: translateY(40px) scale(0.94);
-  transition: opacity 500ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(46px) scale(0.94);
+  transition:
+    opacity 520ms ease,
+    transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
 }
 
 .tarot-card.is-revealed {
@@ -277,23 +412,40 @@ h1 {
   transform: translateY(0) scale(1) rotate(180deg);
 }
 
+.tarot-card:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 34px 110px color-mix(in srgb, var(--card-accent) 28%, transparent);
+}
+
 .tarot-card__frame,
-.tarot-card__halo {
+.tarot-card__halo,
+.tarot-card__grain,
+.tarot-card__constellation {
   position: absolute;
   pointer-events: none;
 }
 
 .tarot-card__frame {
   inset: 10px;
-  border-radius: 22px;
+  border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--card-accent) 55%, rgba(255, 255, 255, 0.12));
 }
 
 .tarot-card__halo {
-  inset: 24%;
+  inset: 23%;
   border-radius: 999px;
   background: radial-gradient(circle, color-mix(in srgb, var(--card-glow) 55%, transparent), transparent 70%);
-  filter: blur(8px);
+  filter: blur(10px);
+}
+
+.tarot-card__grain {
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.26) 0 0.8px, transparent 1px),
+    radial-gradient(circle at 72% 32%, rgba(255, 255, 255, 0.2) 0 0.8px, transparent 1px),
+    radial-gradient(circle at 40% 78%, rgba(255, 255, 255, 0.14) 0 0.8px, transparent 1px);
 }
 
 .tarot-card__header,
@@ -303,26 +455,25 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: color-mix(in srgb, var(--card-ink) 80%, white);
+  color: color-mix(in srgb, var(--card-ink) 82%, white);
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  font-size: 0.74rem;
+  font-size: 0.73rem;
 }
 
 .tarot-card__footer {
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   text-align: center;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: none;
 }
 
 .tarot-card__footer h2 {
-  font-size: 2rem;
+  font-size: clamp(1.9rem, 4vw, 2.2rem);
 }
 
 .tarot-card__footer p {
-  margin: 0;
   color: color-mix(in srgb, var(--card-ink) 80%, rgba(255, 255, 255, 0.65));
 }
 
@@ -335,6 +486,15 @@ h1 {
   place-items: center;
 }
 
+.tarot-card__constellation {
+  inset: 16% 18%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 26% 72%, rgba(255, 255, 255, 0.14) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 78% 66%, rgba(255, 255, 255, 0.14) 0 1px, transparent 1.5px);
+}
+
 .tarot-card__sigil {
   width: 46%;
   aspect-ratio: 1;
@@ -344,8 +504,9 @@ h1 {
     radial-gradient(circle, color-mix(in srgb, var(--card-glow) 80%, transparent), transparent 62%),
     linear-gradient(135deg, color-mix(in srgb, var(--card-accent) 35%, transparent), transparent);
   box-shadow:
-    0 0 40px color-mix(in srgb, var(--card-accent) 30%, transparent),
+    0 0 42px color-mix(in srgb, var(--card-accent) 30%, transparent),
     0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  animation: breathe 6s ease-in-out infinite;
 }
 
 .tarot-card__sigil::before,
@@ -364,7 +525,7 @@ h1 {
 .tarot-card__orbit {
   position: absolute;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--card-accent) 50%, rgba(255, 255, 255, 0.15));
+  border: 1px solid color-mix(in srgb, var(--card-accent) 54%, rgba(255, 255, 255, 0.15));
 }
 
 .tarot-card__orbit--one {
@@ -406,11 +567,11 @@ h1 {
 .reading-panel {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 280ms ease, transform 420ms ease;
+  transition: opacity 300ms ease, transform 440ms ease;
 }
 
 .reading-panel.is-visible {
@@ -418,29 +579,51 @@ h1 {
   transform: translateY(0);
 }
 
-.reading-panel p:last-child,
+.reading-panel > div {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.reading-panel > div p:last-child,
 .share-view__reflection {
+  margin-top: 12px;
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.75;
+}
+
+.share-view__copy {
+  max-width: 38rem;
 }
 
 .share-view__reflection {
-  margin: 24px 0 0;
+  margin-top: 28px;
 }
 
 @keyframes shuffle-left {
-  0% { transform: rotate(-12deg) translate(-64px, 18px); }
-  50% { transform: rotate(-20deg) translate(-120px, -12px); }
+  0% { transform: rotate(-12deg) translate(-70px, 26px); }
+  50% { transform: rotate(-22deg) translate(-128px, -16px); }
   100% { transform: rotate(-4deg) translate(-12px, -4px); }
 }
 
 @keyframes shuffle-right {
-  0% { transform: rotate(12deg) translate(64px, 18px); }
-  50% { transform: rotate(20deg) translate(120px, -12px); }
+  0% { transform: rotate(12deg) translate(70px, 26px); }
+  50% { transform: rotate(22deg) translate(128px, -16px); }
   100% { transform: rotate(4deg) translate(12px, -4px); }
 }
 
 @keyframes pulse-mid {
+  0%, 100% { transform: translateY(-4px) scale(1); }
+  50% { transform: translateY(-12px) scale(1.05); }
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(24px, -18px, 0) scale(1.08); }
+}
+
+@keyframes breathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }
 }
@@ -451,8 +634,14 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .hero-copy,
+  .share-view__copy {
+    order: 1;
+  }
+
   .stage {
-    min-height: 620px;
+    min-height: 640px;
+    order: 2;
   }
 
   .reading-panel {
@@ -463,17 +652,26 @@ h1 {
 @media (max-width: 640px) {
   .page-shell {
     padding-inline: 14px;
+    padding-bottom: 34px;
   }
 
   .hero-copy,
   .reading-panel,
   .share-view__copy {
-    padding: 22px;
-    border-radius: 22px;
+    padding: 24px 20px;
+    border-radius: 24px;
   }
 
   h1 {
-    font-size: clamp(2.8rem, 14vw, 4.2rem);
+    font-size: clamp(2.9rem, 16vw, 4.6rem);
+  }
+
+  .lede {
+    font-size: 0.98rem;
+  }
+
+  .ritual-guide {
+    grid-template-columns: 1fr;
   }
 
   .stage {
@@ -482,7 +680,7 @@ h1 {
 
   .deck__card,
   .tarot-card {
-    width: min(84vw, 340px);
+    width: min(86vw, 340px);
   }
 
   .hero-actions {
@@ -491,5 +689,16 @@ h1 {
 
   .button {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

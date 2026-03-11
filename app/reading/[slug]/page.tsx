@@ -1,3 +1,4 @@
+import { AmbientOrbs } from "@/components/ambient-orbs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -36,8 +37,7 @@ export default async function ReadingPage({ params }: ReadingPageProps) {
 
   return (
     <main className="page-shell page-shell--reading">
-      <div className="aurora aurora--left" />
-      <div className="aurora aurora--right" />
+      <AmbientOrbs />
       <section className="share-view">
         <div className="share-view__copy">
           <p className="eyebrow">Shared daily reading</p>
@@ -45,6 +45,7 @@ export default async function ReadingPage({ params }: ReadingPageProps) {
           <p className="lede">{reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning}</p>
           <div className="hero-meta">
             <span>{formatReadingDate(reading.dateKey)}</span>
+            <span>{reading.card.arcana}</span>
             <span>{reading.isReversed ? "Reversed" : "Upright"}</span>
           </div>
           <p className="share-view__reflection">{reading.card.reflection}</p>

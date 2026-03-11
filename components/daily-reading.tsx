@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { DailyReading } from "@/lib/tarot";
 import { TarotCardFace } from "@/components/tarot-card";
@@ -14,14 +14,6 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
-
-  const shareUrl = useMemo(() => {
-    if (typeof window === "undefined") {
-      return "";
-    }
-
-    return `${window.location.origin}/reading/${reading.slug}`;
-  }, [reading.slug]);
 
   useEffect(() => {
     if (!isShuffling) {
@@ -51,6 +43,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   }
 
   async function handleShare() {
+    const shareUrl = `${window.location.origin}/reading/${reading.slug}`;
     const message = `${formattedDate}: ${reading.card.name} ${reading.isReversed ? "(Reversed)" : "(Upright)"}\n${reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning}`;
 
     if (navigator.share) {
@@ -76,11 +69,12 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         <p className="eyebrow">Daily divination</p>
         <h1>Tarot of the Day</h1>
         <p className="lede">
-          A single card for the atmosphere of the day. Shuffle the deck, reveal the draw, and share a link to the reading.
+          A single card for the atmosphere of the day. Shuffle the deck, reveal the draw, and sit with a reading built to feel more like ritual than widget.
         </p>
         <div className="hero-meta">
           <span>{formattedDate}</span>
           <span>{reading.card.arcana}</span>
+          <span>{reading.isReversed ? "Reversed draw" : "Upright draw"}</span>
         </div>
         <div className="hero-actions">
           <button className="button button--primary" onClick={handleShuffle} type="button" disabled={isShuffling}>
@@ -90,9 +84,22 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
             {shareState === "copied" ? "Copied Link" : "Share Reading"}
           </button>
         </div>
+        <div className="ritual-guide" aria-label="Reading guide">
+          <div>
+            <p className="reading-panel__label">Card of the day</p>
+            <strong>{reading.card.name}</strong>
+            <p>{reading.card.suit}</p>
+          </div>
+          <div>
+            <p className="reading-panel__label">When revealed</p>
+            <strong>{isRevealed ? "Interpret the message" : "Take one breath"}</strong>
+            <p>{isRevealed ? "Let the card set the tone before acting on it." : "Pause before shuffling to sharpen the draw."}</p>
+          </div>
+        </div>
       </section>
 
       <section className="stage">
+        <div className="stage__glow" />
         <div className={`deck ${isShuffling ? "is-shuffling" : ""} ${isRevealed ? "is-hidden" : ""}`}>
           <span className="deck__card deck__card--one" />
           <span className="deck__card deck__card--two" />
@@ -111,6 +118,12 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         <div>
           <p className="reading-panel__label">Reflection</p>
           <p>{reading.card.reflection}</p>
+        </div>
+        <div>
+          <p className="reading-panel__label">Card details</p>
+          <p>
+            {reading.card.arcana} · {reading.card.number} · {reading.isReversed ? "Reversed" : "Upright"}
+          </p>
         </div>
       </section>
     </div>

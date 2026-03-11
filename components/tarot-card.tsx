@@ -22,11 +22,13 @@ export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
     >
       <div className="tarot-card__frame" />
       <div className="tarot-card__halo" />
+      <div className="tarot-card__grain" />
       <header className="tarot-card__header">
         <span>{card.arcana}</span>
         <span>{card.number}</span>
       </header>
       <div className="tarot-card__art">
+        <div className="tarot-card__constellation" />
         <div className="tarot-card__sigil" />
         <div className="tarot-card__orbit tarot-card__orbit--one" />
         <div className="tarot-card__orbit tarot-card__orbit--two" />
@@ -38,7 +40,7 @@ export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
       </div>
       <footer className="tarot-card__footer">
         <h2>{card.name}</h2>
-        <p>{isReversed ? "Reversed" : "Upright"}</p>
+        <p>{isReversed ? "Reversed" : "Upright"} · {card.suit}</p>
       </footer>
     </article>
   );

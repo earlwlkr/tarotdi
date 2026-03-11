@@ -1,3 +1,4 @@
+import { AmbientOrbs } from "@/components/ambient-orbs";
 import { DailyReadingExperience } from "@/components/daily-reading";
 import { formatReadingDate, getDailyReading } from "@/lib/daily-reading";
 
@@ -6,8 +7,7 @@ export default function HomePage() {
 
   return (
     <main className="page-shell">
-      <div className="aurora aurora--left" />
-      <div className="aurora aurora--right" />
+      <AmbientOrbs />
       <DailyReadingExperience reading={reading} formattedDate={formatReadingDate(reading.dateKey)} />
     </main>
   );
