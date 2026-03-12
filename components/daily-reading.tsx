@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { formatReadingDate, getDailyReading } from "@/lib/daily-reading";
 import { getMeaningParagraphs, type DailyReading } from "@/lib/tarot";
 import { TarotCardFace } from "@/components/tarot-card";
 
@@ -13,11 +14,23 @@ type DailyReadingProps = {
 const SHUFFLE_DURATION_MS = 1600;
 
 export function DailyReadingExperience({ reading, formattedDate }: DailyReadingProps) {
+  const [currentReading, setCurrentReading] = useState(reading);
+  const [currentFormattedDate, setCurrentFormattedDate] = useState(formattedDate);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
-  const activeKeywords = reading.isReversed ? reading.card.reversedKeywords : reading.card.uprightKeywords;
-  const meaningParagraphs = getMeaningParagraphs(reading.card, reading.isReversed);
+  const activeKeywords = currentReading.isReversed ? currentReading.card.reversedKeywords : currentReading.card.uprightKeywords;
+  const meaningParagraphs = getMeaningParagraphs(currentReading.card, currentReading.isReversed);
+
+  useEffect(() => {
+    const syncTimer = window.setTimeout(() => {
+      const localReading = getDailyReading(new Date());
+      setCurrentReading(localReading);
+      setCurrentFormattedDate(formatReadingDate(localReading.dateKey));
+    }, 0);
+
+    return () => window.clearTimeout(syncTimer);
+  }, []);
 
   useEffect(() => {
     if (!isShuffling) {
@@ -47,8 +60,8 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   }
 
   async function handleShare() {
-    const shareUrl = `${window.location.origin}/reading/${reading.slug}`;
-    const message = `${formattedDate}: ${reading.card.name} ${reading.isReversed ? "(Reversed)" : "(Upright)"}\n${reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning}`;
+    const shareUrl = `${window.location.origin}/reading/${currentReading.slug}`;
+    const message = `${currentFormattedDate}: ${currentReading.card.name} ${currentReading.isReversed ? "(Reversed)" : "(Upright)"}\n${currentReading.isReversed ? currentReading.card.reversedMeaning : currentReading.card.uprightMeaning}`;
 
     if (navigator.share) {
       try {
@@ -76,9 +89,9 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           A single card for the atmosphere of the day. Shuffle the deck, reveal the draw, and sit with a reading built to feel more like ritual than widget.
         </p>
         <div className="hero-meta">
-          <span>{formattedDate}</span>
-          {isRevealed ? <span>{reading.card.arcana}</span> : null}
-          {isRevealed ? <span>{reading.isReversed ? "Reversed draw" : "Upright draw"}</span> : null}
+          <span>{currentFormattedDate}</span>
+          {isRevealed ? <span>{currentReading.card.arcana}</span> : null}
+          {isRevealed ? <span>{currentReading.isReversed ? "Reversed draw" : "Upright draw"}</span> : null}
         </div>
         <div className="hero-actions">
           <button className="button button--primary" onClick={handleShuffle} type="button" disabled={isShuffling}>
@@ -91,8 +104,8 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
         <div className="ritual-guide" aria-label="Reading guide">
           <div>
             <p className="reading-panel__label">Card of the day</p>
-            <strong>{isRevealed ? reading.card.name : "Hidden until reveal"}</strong>
-            <p>{isRevealed ? reading.card.suit : "Shuffle the deck to uncover the draw."}</p>
+            <strong>{isRevealed ? currentReading.card.name : "Hidden until reveal"}</strong>
+            <p>{isRevealed ? currentReading.card.suit : "Shuffle the deck to uncover the draw."}</p>
           </div>
           <div>
             <p className="reading-panel__label">When revealed</p>
@@ -110,12 +123,12 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           <span className="deck__card deck__card--three" />
         </div>
 
-        <TarotCardFace card={reading.card} isReversed={reading.isReversed} revealed={isRevealed} />
+        <TarotCardFace card={currentReading.card} isReversed={currentReading.isReversed} revealed={isRevealed} />
       </section>
 
       <section className={`reading-panel ${isRevealed ? "is-visible" : ""}`}>
         <p className="reading-panel__label">Reading</p>
-        <h3>{reading.card.name}</h3>
+        <h3>{currentReading.card.name}</h3>
         <p className="reading-panel__label">Key themes</p>
         <ul className="meaning-tags" aria-label="Key themes">
           {activeKeywords.map((keyword) => (
@@ -123,7 +136,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           ))}
         </ul>
         <p className="reading-panel__label">Reflection</p>
-        <p>{reading.card.reflection}</p>
+        <p>{currentReading.card.reflection}</p>
         <p className="reading-panel__label">Meaning</p>
         <div className="meaning-copy">
           {meaningParagraphs.map((paragraph) => (

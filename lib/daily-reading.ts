@@ -40,11 +40,12 @@ export function getReadingFromSlug(slug: string): DailyReading | null {
 }
 
 export function formatReadingDate(dateKey: string) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+
   return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
-    timeZone: "UTC"
-  }).format(new Date(`${dateKey}T00:00:00.000Z`));
+    year: "numeric"
+  }).format(new Date(year, (month ?? 1) - 1, day ?? 1));
 }
