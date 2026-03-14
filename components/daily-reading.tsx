@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { formatReadingDate, getDailyReading } from "@/lib/daily-reading";
 import { getMeaningParagraphs, type DailyReading } from "@/lib/tarot";
@@ -19,6 +19,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
+  const revealedCardRef = useRef<HTMLElement>(null);
   const activeKeywords = currentReading.isReversed ? currentReading.card.reversedKeywords : currentReading.card.uprightKeywords;
   const meaningParagraphs = getMeaningParagraphs(currentReading.card, currentReading.isReversed);
 
@@ -53,6 +54,23 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
     const resetTimer = window.setTimeout(() => setShareState("idle"), 1800);
     return () => window.clearTimeout(resetTimer);
   }, [shareState]);
+
+  useEffect(() => {
+    if (!isShuffling) {
+      return;
+    }
+
+    const revealedCard = revealedCardRef.current;
+    if (!revealedCard) {
+      return;
+    }
+
+    revealedCard.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+    revealedCard.focus({ preventScroll: true });
+  }, [isShuffling]);
 
   function handleShuffle() {
     setIsRevealed(false);
@@ -123,7 +141,12 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           <span className="deck__card deck__card--three" />
         </div>
 
-        <TarotCardFace card={currentReading.card} isReversed={currentReading.isReversed} revealed={isRevealed} />
+        <TarotCardFace
+          ref={revealedCardRef}
+          card={currentReading.card}
+          isReversed={currentReading.isReversed}
+          revealed={isRevealed}
+        />
       </section>
 
       <section className={`reading-panel ${isRevealed ? "is-visible" : ""}`}>

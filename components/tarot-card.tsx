@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { forwardRef, type CSSProperties } from "react";
 
 import type { TarotCard } from "@/lib/tarot";
 
@@ -8,9 +8,13 @@ type TarotCardProps = {
   revealed: boolean;
 };
 
-export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
+export const TarotCardFace = forwardRef<HTMLElement, TarotCardProps>(function TarotCardFace(
+  { card, isReversed, revealed },
+  ref
+) {
   return (
     <article
+      ref={ref}
       className={`tarot-card ${revealed ? "is-revealed" : ""} ${isReversed ? "is-reversed" : ""}`}
       style={
         {
@@ -19,6 +23,7 @@ export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
           ["--card-ink" as string]: card.palette.ink
         } as CSSProperties
       }
+      tabIndex={-1}
     >
       <div className="tarot-card__reveal-flare" />
       <div className="tarot-card__frame" />
@@ -45,4 +50,4 @@ export function TarotCardFace({ card, isReversed, revealed }: TarotCardProps) {
       </footer>
     </article>
   );
-}
+});
