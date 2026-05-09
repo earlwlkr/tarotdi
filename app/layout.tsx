@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tarot of the Day",
-  description: "A polished tarot-of-the-day reading with a shareable daily card reveal.",
+  title: "Tarotdi",
+  description: "Daily tarot ritual with a single-card reveal, reflective guidance, and readings you can share.",
   metadataBase: new URL("https://tarotdi.vercel.app")
 };
 

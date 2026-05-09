@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: ReadingPageProps): Promise<Me
   }
 
   return {
-    title: `${reading.card.name} • Tarot of the Day`,
+    title: `${reading.card.name} • Tarotdi`,
     description: reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning
   };
 }
