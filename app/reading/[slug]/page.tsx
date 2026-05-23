@@ -16,58 +16,145 @@ export async function generateMetadata({ params }: ReadingPageProps): Promise<Me
   const { slug } = await params;
   const reading = getReadingFromSlug(slug);
 
-  if (!reading) {
+  if (!reading || !reading.draws || reading.draws.length === 0) {
     return {
       title: "Reading Not Found"
     };
   }
 
-  return {
-    title: `${reading.card.name} • Tarotdi`,
-    description: reading.isReversed ? reading.card.reversedMeaning : reading.card.uprightMeaning
-  };
+  const firstCard = reading.draws[0].card;
+  if (reading.spread === "daily") {
+    return {
+      title: `${firstCard.name} • Tarotdi`,
+      description: reading.draws[0].isReversed ? firstCard.reversedMeaning : firstCard.uprightMeaning
+    };
+  } else {
+    const spreadName =
+      reading.spread === "three-card" ? "Three-Card Spread" : "Path of Choices Spread";
+    return {
+      title: `${spreadName} Reading • Tarotdi`,
+      description: `A shared ${reading.spread} tarot reading drawn on ${formatReadingDate(reading.dateKey)}.`
+    };
+  }
 }
 
 export default async function ReadingPage({ params }: ReadingPageProps) {
   const { slug } = await params;
   const reading = getReadingFromSlug(slug);
 
-  if (!reading) {
+  if (!reading || !reading.draws || reading.draws.length === 0) {
     notFound();
   }
 
-  const activeKeywords = reading.isReversed ? reading.card.reversedKeywords : reading.card.uprightKeywords;
-  const meaningParagraphs = getMeaningParagraphs(reading.card, reading.isReversed);
-
   return (
-    <main className="page-shell page-shell--reading">
+    <main className="page-shell">
       <AmbientOrbs />
-      <section className="share-view">
-        <div className="share-view__copy">
-          <p className="eyebrow">Shared daily reading</p>
-          <h1>{reading.card.name}</h1>
-          <div className="hero-meta">
+
+      <div
+        style={{
+          maxWidth: "1140px",
+          margin: "0 auto",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: "40px"
+        }}
+      >
+        {/* Header summary of shared draw */}
+        <header className="hero-copy" style={{ textAlign: "center" }}>
+          <p className="eyebrow">Shared divination reading</p>
+          <h1 style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)" }}>
+            {reading.spread === "daily"
+              ? `Daily Draw: ${reading.draws[0].card.name}`
+              : reading.spread === "three-card"
+                ? "Timeline Spread (3 Cards)"
+                : "Path of Choices (2 Cards)"}
+          </h1>
+          <div className="hero-meta" style={{ justifyContent: "center" }}>
             <span>{formatReadingDate(reading.dateKey)}</span>
-            <span>{reading.card.arcana}</span>
-            <span>{reading.isReversed ? "Reversed" : "Upright"}</span>
+            <span>
+              {reading.spread === "daily"
+                ? "1 Card"
+                : reading.spread === "three-card"
+                  ? "3 Cards"
+                  : "2 Cards"}
+            </span>
+            <span style={{ textTransform: "uppercase" }}>{reading.spread} Spread</span>
           </div>
-          <p className="reading-panel__label">Key themes</p>
-          <ul className="meaning-tags meaning-tags--inline" aria-label="Key themes">
-            {activeKeywords.map((keyword) => (
-              <li key={keyword}>{keyword}</li>
-            ))}
-          </ul>
-          <p className="reading-panel__label">Reflection</p>
-          <p className="share-view__reflection">{reading.card.reflection}</p>
-          <p className="reading-panel__label">Meaning</p>
-          <div className="meaning-copy meaning-copy--inline">
-            {meaningParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+        </header>
+
+        {/* Spread drawing slot grid */}
+        <section className="hero-copy" style={{ padding: "40px 24px" }}>
+          <div className="spread-slots-container">
+            {reading.draws.map((draw, idx) => (
+              <div key={idx} className="spread-slot">
+                {draw.slotLabel && <span className="spread-slot-label">{draw.slotLabel}</span>}
+                <TarotCardFace card={draw.card} isReversed={draw.isReversed} revealed visible />
+              </div>
             ))}
           </div>
-        </div>
-        <TarotCardFace card={reading.card} isReversed={reading.isReversed} revealed />
-      </section>
+        </section>
+
+        {/* Detailed interpretation scroll panels */}
+        <section style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+          {reading.draws.map((draw, idx) => {
+            const activeKeywords = draw.isReversed
+              ? draw.card.reversedKeywords
+              : draw.card.uprightKeywords;
+            const meaningParagraphs = getMeaningParagraphs(draw.card, draw.isReversed);
+
+            return (
+              <article
+                key={idx}
+                className="reading-panel is-visible"
+                style={{ opacity: 1, transform: "none" }}
+              >
+                <p className="reading-panel__label">
+                  {draw.slotLabel ? `${draw.slotLabel} Card` : "Card Interpretation"}
+                </p>
+                <h3 style={{ fontSize: "2rem" }}>{draw.card.name}</h3>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                    gap: "32px",
+                    marginTop: "24px"
+                  }}
+                >
+                  <div>
+                    <p className="reading-panel__label">Key themes</p>
+                    <ul className="meaning-tags" aria-label="Key themes">
+                      {activeKeywords.map((keyword) => (
+                        <li key={keyword}>{keyword}</li>
+                      ))}
+                    </ul>
+
+                    <p className="reading-panel__label" style={{ marginTop: "28px" }}>
+                      Reflection
+                    </p>
+                    <p
+                      className="share-view__reflection"
+                      style={{ marginTop: "12px", borderLeftWidth: "3px" }}
+                    >
+                      {draw.card.reflection}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="reading-panel__label">Meaning</p>
+                    <div className="meaning-copy">
+                      {meaningParagraphs.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      </div>
     </main>
   );
 }

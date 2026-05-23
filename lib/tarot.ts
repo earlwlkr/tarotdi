@@ -19,12 +19,29 @@ export type TarotCard = {
   symbols: string[];
 };
 
+export type SpreadType = "daily" | "three-card" | "choices";
+
+export type CardDraw = {
+  card: TarotCard;
+  isReversed: boolean;
+  slotLabel?: string;
+};
+
+export type TarotReading = {
+  spread: SpreadType;
+  draws: CardDraw[];
+  dateKey: string;
+  slug: string;
+  notes?: string;
+};
+
 export type DailyReading = {
   card: TarotCard;
   isReversed: boolean;
   dateKey: string;
   slug: string;
 };
+
 
 const suitInterpretations: Record<TarotSuit, { upright: string; reversed: string }> = {
   "Major Arcana": {
@@ -157,6 +174,22 @@ export function buildDateKey(date = new Date()) {
   return date.toISOString().slice(0, 10);
 }
 
-export function makeReadingSlug(dateKey: string, cardSlug: string, isReversed: boolean) {
-  return `${dateKey}--${cardSlug}--${isReversed ? "reversed" : "upright"}`;
+export function makeReadingSlug(
+  dateKey: string,
+  param2: string | SpreadType,
+  param3?: boolean | CardDraw[]
+): string {
+  if (
+    typeof param2 === "string" &&
+    (param2 === "daily" || param2 === "three-card" || param2 === "choices") &&
+    Array.isArray(param3)
+  ) {
+    const drawsEncoded = param3
+      .map((d) => `${d.card.slug}-${d.isReversed ? "reversed" : "upright"}`)
+      .join("--");
+    return `${dateKey}--${param2}--${drawsEncoded}`;
+  }
+  // Single card fallback
+  return `${dateKey}--${param2}--${param3 ? "reversed" : "upright"}`;
 }
+

@@ -351,117 +351,124 @@ function Astrolabe({ card }: AstrolabeProps) {
         {/* Ambient Center Glow backing */}
         <circle cx="100" cy="100" r="60" fill="url(#centerGlow)" />
 
-        {/* Dynamic Sacred Geometry Background Grid */}
-        {backgroundGrid}
-
-        {/* Intricate Outer Astrolabe Dials */}
-        <circle cx="100" cy="100" r="88" stroke="var(--gold)" strokeWidth="0.8" opacity="0.3" />
-        <circle cx="100" cy="100" r="84" stroke="var(--gold)" strokeWidth="1.2" opacity="0.5" />
-        <circle cx="100" cy="100" r="81" stroke="var(--gold)" strokeWidth="0.6" strokeDasharray="2 3" opacity="0.4" />
-
-        {/* Outer Ring Tick Marks (Astro-Grid) */}
-        <g stroke="var(--gold)" strokeWidth="0.8" opacity="0.35">
-          {Array.from({ length: tickCount }).map((_, i) => {
-            const angle = (i * (360 / tickCount) * Math.PI) / 180;
-            const x1 = 100 + 84 * Math.cos(angle);
-            const y1 = 100 + 84 * Math.sin(angle);
-            const x2 = 100 + 87 * Math.cos(angle);
-            const y2 = 100 + 87 * Math.sin(angle);
-            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
-          })}
+        {/* Dynamic Sacred Geometry Background Grid (Slow Clockwise) */}
+        <g className="astrolabe-spin-slow">
+          {backgroundGrid}
         </g>
 
-        {/* Main Orbital Track for Symbols */}
-        <circle cx="100" cy="100" r="60" stroke="var(--gold)" strokeWidth="0.8" strokeDasharray="4 6" opacity="0.3" />
+        {/* Intricate Outer Astrolabe Dials & Tick Marks (Slow Counter-Clockwise) */}
+        <g className="astrolabe-spin-reverse">
+          <circle cx="100" cy="100" r="88" stroke="var(--gold)" strokeWidth="0.8" opacity="0.3" />
+          <circle cx="100" cy="100" r="84" stroke="var(--gold)" strokeWidth="1.2" opacity="0.5" />
+          <circle cx="100" cy="100" r="81" stroke="var(--gold)" strokeWidth="0.6" strokeDasharray="2 3" opacity="0.4" />
 
-        {/* Central Dial Gilded Base */}
-        <circle cx="100" cy="100" r="30" stroke="var(--gold)" strokeWidth="1.2" fill="#040508" fillOpacity="0.4" />
-        <circle cx="100" cy="100" r="27" stroke="var(--gold)" strokeWidth="0.6" strokeDasharray="1 2" opacity="0.4" />
+          {/* Outer Ring Tick Marks (Astro-Grid) */}
+          <g stroke="var(--gold)" strokeWidth="0.8" opacity="0.35">
+            {Array.from({ length: tickCount }).map((_, i) => {
+              const angle = (i * (360 / tickCount) * Math.PI) / 180;
+              const x1 = 100 + 84 * Math.cos(angle);
+              const y1 = 100 + 84 * Math.sin(angle);
+              const x2 = 100 + 87 * Math.cos(angle);
+              const y2 = 100 + 87 * Math.sin(angle);
+              return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
+            })}
+          </g>
 
-        {/* Programmatic Alignment Vectors & Nodes */}
-        {n > 0 ? (
-          activeSymbols.map((symbolName, i) => {
-            // Distribute symbols at symmetrical angles starting from top (-90 deg)
-            const angleDeg = i * (360 / n) - 90;
-            const angleRad = (angleDeg * Math.PI) / 180;
-            const radius = 60;
-            const nodeX = 100 + radius * Math.cos(angleRad);
-            const nodeY = 100 + radius * Math.sin(angleRad);
+          {/* Main Orbital Track for Symbols */}
+          <circle cx="100" cy="100" r="60" stroke="var(--gold)" strokeWidth="0.8" strokeDasharray="4 6" opacity="0.3" />
+        </g>
 
-            // Dynamically resolve matching symbol glyph path
-            const glyph = resolveSymbolGlyph(symbolName);
+        {/* Central Base and Orbiting Nodes (Slow Clockwise) */}
+        <g className="astrolabe-spin-slow">
+          {/* Central Dial Gilded Base */}
+          <circle cx="100" cy="100" r="30" stroke="var(--gold)" strokeWidth="1.2" fill="#040508" fillOpacity="0.4" />
+          <circle cx="100" cy="100" r="27" stroke="var(--gold)" strokeWidth="0.6" strokeDasharray="1 2" opacity="0.4" />
 
-            return (
-              <g key={symbolName}>
-                {/* Connecting gold alignment vector lines */}
-                <line
-                  x1="100"
-                  y1="100"
-                  x2={nodeX}
-                  y2={nodeY}
-                  stroke="var(--gold)"
-                  strokeWidth="0.8"
-                  opacity="0.45"
-                />
+          {/* Programmatic Alignment Vectors & Nodes */}
+          {n > 0 ? (
+            activeSymbols.map((symbolName, i) => {
+              // Distribute symbols at symmetrical angles starting from top (-90 deg)
+              const angleDeg = i * (360 / n) - 90;
+              const angleRad = (angleDeg * Math.PI) / 180;
+              const radius = 60;
+              const nodeX = 100 + radius * Math.cos(angleRad);
+              const nodeY = 100 + radius * Math.sin(angleRad);
 
-                {/* Star-like flares connecting node to outer dial */}
-                <line
-                  x1={nodeX}
-                  y1={nodeY}
-                  x2={100 + 84 * Math.cos(angleRad)}
-                  y2={100 + 84 * Math.sin(angleRad)}
-                  stroke="var(--gold)"
-                  strokeWidth="0.6"
-                  opacity="0.3"
-                  strokeDasharray="1 1"
-                />
+              // Dynamically resolve matching symbol glyph path
+              const glyph = resolveSymbolGlyph(symbolName);
 
-                {/* Symmetrical Orbiting Node */}
-                <circle
-                  cx={nodeX}
-                  cy={nodeY}
-                  r="13"
-                  stroke="var(--gold)"
-                  strokeWidth="1.2"
-                  fill="#06080d"
-                  opacity="0.95"
-                />
-                <circle
-                  cx={nodeX}
-                  cy={nodeY}
-                  r="11"
-                  stroke="var(--gold)"
-                  strokeWidth="0.5"
-                  strokeDasharray="1 1"
-                  opacity="0.5"
-                />
+              return (
+                <g key={symbolName}>
+                  {/* Connecting gold alignment vector lines */}
+                  <line
+                    x1="100"
+                    y1="100"
+                    x2={nodeX}
+                    y2={nodeY}
+                    stroke="var(--gold)"
+                    strokeWidth="0.8"
+                    opacity="0.45"
+                  />
 
-                {/* Secondary Glyph nested in the node */}
-                <g transform={`translate(${nodeX}, ${nodeY})`} color="var(--gold)" opacity="0.9">
-                  {glyph}
+                  {/* Star-like flares connecting node to outer dial */}
+                  <line
+                    x1={nodeX}
+                    y1={nodeY}
+                    x2={100 + 84 * Math.cos(angleRad)}
+                    y2={100 + 84 * Math.sin(angleRad)}
+                    stroke="var(--gold)"
+                    strokeWidth="0.6"
+                    opacity="0.3"
+                    strokeDasharray="1 1"
+                  />
+
+                  {/* Symmetrical Orbiting Node */}
+                  <circle
+                    cx={nodeX}
+                    cy={nodeY}
+                    r="13"
+                    stroke="var(--gold)"
+                    strokeWidth="1.2"
+                    fill="#06080d"
+                    opacity="0.95"
+                  />
+                  <circle
+                    cx={nodeX}
+                    cy={nodeY}
+                    r="11"
+                    stroke="var(--gold)"
+                    strokeWidth="0.5"
+                    strokeDasharray="1 1"
+                    opacity="0.5"
+                  />
+
+                  {/* Secondary Glyph nested in the node */}
+                  <g transform={`translate(${nodeX}, ${nodeY})`} color="var(--gold)" opacity="0.9">
+                    {glyph}
+                  </g>
                 </g>
-              </g>
-            );
-          })
-        ) : (
-          // Fallback symmetrical stars if no symbols defined
-          Array.from({ length: 3 }).map((_, i) => {
-            const angleRad = (i * 120 - 90) * Math.PI / 180;
-            const radius = 60;
-            const nodeX = 100 + radius * Math.cos(angleRad);
-            const nodeY = 100 + radius * Math.sin(angleRad);
-            return (
-              <g key={i}>
-                <line x1="100" y1="100" x2={nodeX} y2={nodeY} stroke="var(--gold)" strokeWidth="0.6" opacity="0.3" />
-                <circle cx={nodeX} cy={nodeY} r="3" fill="var(--gold)" opacity="0.4" />
-              </g>
-            );
-          })
-        )}
+              );
+            })
+          ) : (
+            // Fallback symmetrical stars if no symbols defined
+            Array.from({ length: 3 }).map((_, i) => {
+              const angleRad = (i * 120 - 90) * Math.PI / 180;
+              const radius = 60;
+              const nodeX = 100 + radius * Math.cos(angleRad);
+              const nodeY = 100 + radius * Math.sin(angleRad);
+              return (
+                <g key={i}>
+                  <line x1="100" y1="100" x2={nodeX} y2={nodeY} stroke="var(--gold)" strokeWidth="0.6" opacity="0.3" />
+                  <circle cx={nodeX} cy={nodeY} r="3" fill="var(--gold)" opacity="0.4" />
+                </g>
+              );
+            })
+          )}
 
-        {/* Central Suit Emblem Group */}
-        <g transform="translate(100, 100)" color="var(--text)">
-          {centerEmblem}
+          {/* Central Suit Emblem Group */}
+          <g transform="translate(100, 100)" color="var(--text)">
+            {centerEmblem}
+          </g>
         </g>
       </svg>
     </div>
