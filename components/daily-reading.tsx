@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { formatReadingDate, getDailyReading } from "@/lib/daily-reading";
-import { getMeaningParagraphs, type DailyReading } from "@/lib/tarot";
+import { getMeaningParagraphs, makeReadingSlug, type DailyReading } from "@/lib/tarot";
 import { TarotCardFace } from "@/components/tarot-card";
+import { tarotCards } from "@/data/tarot-cards";
 
 type DailyReadingProps = {
   reading: DailyReading;
@@ -17,6 +18,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   const [currentReading, setCurrentReading] = useState(reading);
   const [currentFormattedDate, setCurrentFormattedDate] = useState(formattedDate);
   const [isShuffling, setIsShuffling] = useState(false);
+  const [isCardVisible, setIsCardVisible] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
   const revealedCardRef = useRef<HTMLElement>(null);
@@ -39,8 +41,16 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
     }
 
     const revealTimer = window.setTimeout(() => {
-      setIsRevealed(true);
+      // 1. Shuffling completes, draw the card face-down
       setIsShuffling(false);
+      setIsCardVisible(true);
+
+      // 2. Wait for the slide-out draw to settle, then physically flip it
+      const flipTimer = window.setTimeout(() => {
+        setIsRevealed(true);
+      }, 700);
+
+      return () => window.clearTimeout(flipTimer);
     }, SHUFFLE_DURATION_MS);
 
     return () => window.clearTimeout(revealTimer);
@@ -74,7 +84,19 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
 
   function handleShuffle() {
     setIsRevealed(false);
+    setIsCardVisible(false);
     setIsShuffling(true);
+
+    // Roll a random card and orientation for testing/variety
+    const randomCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+    const randomReversed = Math.random() > 0.5;
+
+    setCurrentReading({
+      card: randomCard,
+      isReversed: randomReversed,
+      dateKey: currentReading.dateKey,
+      slug: makeReadingSlug(currentReading.dateKey, randomCard.slug, randomReversed)
+    });
   }
 
   async function handleShare() {
@@ -135,7 +157,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
 
       <section className={`stage ${isShuffling ? "is-shuffling" : ""}`}>
         <div className="stage__glow" />
-        <div className={`deck ${isShuffling ? "is-shuffling" : ""} ${isRevealed ? "is-hidden" : ""}`}>
+        <div className={`deck ${isShuffling ? "is-shuffling" : ""} ${isCardVisible || isRevealed ? "is-hidden" : ""}`}>
           <span className="deck__card deck__card--one" />
           <span className="deck__card deck__card--two" />
           <span className="deck__card deck__card--three" />
@@ -146,6 +168,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           card={currentReading.card}
           isReversed={currentReading.isReversed}
           revealed={isRevealed}
+          visible={isCardVisible}
         />
       </section>
 
