@@ -381,7 +381,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
       card: randomCard,
       isReversed,
       slotLabel,
-      revealed: false
+      revealed: true
     };
 
     const nextDrawnIndices = [...drawnFanIndices, fanIndex];
@@ -646,24 +646,29 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
               {/* Partially filled Altar deal slots backing */}
               <div className="spread-slots-container" style={{ marginBottom: "20px", transform: "scale(0.85)" }}>
                 {Array.from({ length: drawTargetCount }).map((_, idx) => (
-                  <div key={idx} className="spread-slot" style={{ width: "150px" }}>
-                    <div
-                      style={{
-                        width: "100%",
-                        aspectRatio: "0.64",
-                        border: "1px dashed rgba(229, 184, 105, 0.2)",
-                        borderRadius: "16px",
-                        background: "rgba(255, 255, 255, 0.01)",
-                        display: "grid",
-                        placeItems: "center"
-                      }}
-                    >
-                      {drawnCards[idx] ? (
-                        <div className="slot-card-back" />
-                      ) : (
+                  <div key={idx} className="spread-slot is-drawing-slot" style={{ width: "150px" }}>
+                    {drawnCards[idx] ? (
+                      <TarotCardFace
+                        card={drawnCards[idx].card}
+                        isReversed={drawnCards[idx].isReversed}
+                        revealed={drawnCards[idx].revealed}
+                        visible={true}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          aspectRatio: "0.64",
+                          border: "1px dashed rgba(229, 184, 105, 0.2)",
+                          borderRadius: "16px",
+                          background: "rgba(255, 255, 255, 0.01)",
+                          display: "grid",
+                          placeItems: "center"
+                        }}
+                      >
                         <span style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Slot {idx + 1}</span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -696,7 +701,11 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           {/* COMPLETE: Reveal Layout */}
           {ritualState === "complete" && (
             <div className="altar-spread-grid">
-              <p className="eyebrow" style={{ textAlign: "center" }}>Click cards to flip and reveal their meanings</p>
+              <p className="eyebrow" style={{ textAlign: "center" }}>
+                {drawnCards.every((c) => c.revealed)
+                  ? "Click cards to explore their detailed meanings"
+                  : "Click cards to flip and reveal their meanings"}
+              </p>
               
               <div className="spread-slots-container">
                 {drawnCards.map((draw, idx) => (

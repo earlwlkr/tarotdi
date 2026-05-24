@@ -1070,6 +1070,7 @@ h3 {
   }
 
   .deck__card,
+  .spread-slot,
   .tarot-card-3d {
     width: min(84vw, 310px);
   }
@@ -1132,6 +1133,42 @@ h3 {
   align-items: center;
   gap: 16px;
   position: relative;
+  width: min(72vw, 364px);
+}
+
+.spread-slot .tarot-card-3d {
+  width: 100% !important;
+}
+
+/* Card scaling for small slots in drawing phase */
+.spread-slot.is-drawing-slot .tarot-card-3d {
+  width: 100% !important;
+  transform: scale(1) !important;
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto;
+}
+
+/* Adjust card front details when scaled down small in drawing slots */
+.spread-slot.is-drawing-slot .tarot-card-front {
+  padding: 12px 10px;
+}
+.spread-slot.is-drawing-slot .tarot-card__header {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+}
+.spread-slot.is-drawing-slot .tarot-card__footer h2 {
+  font-size: 0.8rem;
+}
+.spread-slot.is-drawing-slot .tarot-card__footer p {
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.spread-slot.is-drawing-slot .tarot-card__art {
+  height: calc(100% - 60px);
+}
+.spread-slot.is-drawing-slot .astrolabe {
+  transform: scale(0.65);
 }
 
 .spread-slot-label {
