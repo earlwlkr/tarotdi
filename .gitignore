@@ -4,3 +4,4 @@ npm-debug.log*
 *.tsbuildinfo
 .DS_Store
 .vercel
+.env*.local

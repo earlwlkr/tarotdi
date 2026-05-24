@@ -1579,7 +1579,7 @@ h3 {
   100% { filter: drop-shadow(0 0 35px color-mix(in srgb, var(--card-glow) 35%, transparent)); }
 }
 
-/* --- DYNAMIC MYSTICAL RIFFLE SHUFFLE --- */
+/* --- DYNAMIC MYSTICAL COSMIC VORTEX SHUFFLE --- */
 .mystical-shuffle-deck {
   position: relative;
   width: 140px;
@@ -1601,8 +1601,8 @@ h3 {
   transform-origin: center;
   transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px));
   
-  /* Elegant 3D Riffle Shuffle Animation */
-  animation: riffle-shuffle-animation 1.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  /* Cosmic Vortex Animation */
+  animation: cosmic-vortex-shuffle 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
 }
 
 .mystical-shuffle-card::before {
@@ -1624,31 +1624,42 @@ h3 {
   opacity: 0.5;
 }
 
-@keyframes riffle-shuffle-animation {
+@keyframes cosmic-vortex-shuffle {
   0% {
-    transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px)) rotate(0deg);
+    transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px)) rotate(0deg) scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
-  /* Split cards into two side-piles */
-  30% {
+  /* Scatter cards outwards in a circular vortex radius */
+  35% {
     transform: translate3d(
-      calc(sin(var(--card-idx) * 1.5) * 110px),
-      calc(cos(var(--card-idx) * 1.5) * -8px),
-      calc(var(--card-idx) * -1px)
-    ) rotate(calc(var(--card-idx) % 2 === 0 ? -15deg : 15deg));
+      calc(var(--cos-val) * 115px),
+      calc(var(--sin-val) * 60px),
+      -40px
+    ) rotate(calc(var(--card-idx) * 45deg + 90deg)) scale(0.92);
+    filter: blur(1.2px);
+    opacity: 0.85;
   }
-  /* Rapidly slide and interweave back together */
-  60% {
+  /* Swirl cards around the orbit center */
+  65% {
     transform: translate3d(
-      calc(sin(var(--card-idx) * 1.5) * 12px),
-      -10px,
-      calc(var(--card-idx) * -5px)
-    ) rotate(0deg);
+      calc(var(--cos-val) * -115px),
+      calc(var(--sin-val) * -60px),
+      -20px
+    ) rotate(calc(var(--card-idx) * 45deg + 270deg)) scale(0.95);
+    filter: blur(1.6px);
+    opacity: 0.9;
   }
-  80% {
-    transform: translate3d(0, 3px, calc(var(--card-idx) * -2.5px)) rotate(calc(var(--card-idx) % 2 === 0 ? 1deg : -1deg));
+  /* Converge and collapse back into stack */
+  90% {
+    transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px)) rotate(5deg) scale(1.02);
+    filter: blur(0);
+    opacity: 1;
   }
   100% {
-    transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px)) rotate(0deg);
+    transform: translate3d(0, 0, calc(var(--card-idx) * -2.5px)) rotate(0deg) scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
 }
 

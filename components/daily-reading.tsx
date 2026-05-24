@@ -613,17 +613,25 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
             <div className="stage is-shuffling" style={{ width: "100%" }}>
               <div className="stage__glow" />
               <div className="mystical-shuffle-deck">
-                {Array.from({ length: 8 }).map((_, idx) => (
-                  <div
-                    key={idx}
-                    className="mystical-shuffle-card"
-                    style={
-                      {
-                        ["--card-idx" as string]: idx
-                      } as CSSProperties
-                    }
-                  />
-                ))}
+                {Array.from({ length: 8 }).map((_, idx) => {
+                  const angleRad = (idx * 45 * Math.PI) / 180;
+                  const cosVal = Math.cos(angleRad).toFixed(4);
+                  const sinVal = Math.sin(angleRad).toFixed(4);
+                  return (
+                    <div
+                      key={idx}
+                      className="mystical-shuffle-card"
+                      style={
+                        {
+                          ["--card-idx" as string]: idx,
+                          ["--cos-val" as string]: cosVal,
+                          ["--sin-val" as string]: sinVal,
+                          animationDelay: `${idx * 0.08}s`
+                        } as CSSProperties
+                      }
+                    />
+                  );
+                })}
               </div>
             </div>
           )}
