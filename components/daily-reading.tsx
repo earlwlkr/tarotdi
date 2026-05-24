@@ -659,16 +659,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
                       }}
                     >
                       {drawnCards[idx] ? (
-                        <div
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            background: "linear-gradient(135deg, #0d0e15 0%, #06070a 100%)",
-                            border: "1px solid var(--gold)",
-                            borderRadius: "16px",
-                            boxShadow: "0 0 15px rgba(229, 184, 105, 0.2)"
-                          }}
-                        />
+                        <div className="slot-card-back" />
                       ) : (
                         <span style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Slot {idx + 1}</span>
                       )}
