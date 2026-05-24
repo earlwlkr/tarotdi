@@ -1652,4 +1652,138 @@ h3 {
   }
 }
 
+/* --- RESPONSIVE INTRO STACK --- */
+.intro-deck-stack {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 40px auto 24px;
+  height: 240px;
+  position: relative;
+  width: 100%;
+}
+
+.intro-deck-card {
+  width: 120px;
+  height: 187px;
+  border-radius: 12px;
+  border: 1px solid rgba(229, 184, 105, 0.22);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(229, 184, 105, 0.1), transparent 45%),
+    linear-gradient(135deg, #0d0e15 0%, #06070a 100%);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55), 0 0 15px rgba(229, 184, 105, 0.05);
+  position: absolute;
+  transition: transform 300ms ease;
+}
+
+.intro-deck-card::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(229, 184, 105, 0.12);
+}
+
+.intro-deck-card::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 6px;
+  background:
+    radial-gradient(circle at center, rgba(229, 184, 105, 0.08), transparent 60%),
+    conic-gradient(from 0deg, rgba(229, 184, 105, 0.1), transparent, rgba(111, 143, 218, 0.1), transparent, rgba(229, 184, 105, 0.1));
+  opacity: 0.5;
+}
+
+.intro-deck-card--one {
+  transform: rotate(-10deg) translate(-35px, 10px);
+  z-index: 1;
+}
+
+.intro-deck-card--two {
+  transform: translateY(-5px);
+  z-index: 2;
+}
+
+.intro-deck-card--three {
+  transform: rotate(10deg) translate(35px, 10px);
+  z-index: 3;
+}
+
+.stage.is-shuffling {
+  min-height: 560px;
+}
+
+/* --- MOBILE SPECIFIC SCALING & ALIGNMENTS --- */
+@media (max-width: 640px) {
+  .stage.is-shuffling {
+    min-height: 340px;
+  }
+
+  /* Compact tabs layout */
+  .ritual-selector {
+    width: 100%;
+    border-radius: 16px;
+    padding: 3px;
+    margin-bottom: 16px;
+  }
+
+  .ritual-tab {
+    padding: 8px 4px;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    border-radius: 12px;
+  }
+
+  /* Beautiful mobile scaling for the drawing fan to fit viewports without horizontal overflow */
+  .deck-fan-container {
+    height: 300px;
+    transform: scale(0.8);
+    transform-origin: bottom center;
+    margin-top: 20px;
+  }
+
+  /* Drawer layout compact */
+  .journal-drawer-content {
+    padding: 24px 20px;
+  }
+
+  .journal-drawer-header h2 {
+    font-size: 1.4rem;
+  }
+
+  /* Active slots stack gaps */
+  .spread-slots-container {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 440px) {
+  /* Deeper scaling for very narrow viewports (e.g. older/smaller mobile screens) */
+  .deck-fan-container {
+    height: 240px;
+    transform: scale(0.68);
+    transform-origin: bottom center;
+  }
+  
+  .intro-deck-stack {
+    height: 210px;
+    transform: scale(0.9);
+  }
+}
+
+@media (max-width: 370px) {
+  .deck-fan-container {
+    height: 210px;
+    transform: scale(0.58);
+    transform-origin: bottom center;
+  }
+
+  .ritual-tab {
+    font-size: 0.68rem;
+  }
+}
+
+
 

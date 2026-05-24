@@ -562,7 +562,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
                 role="tab"
                 aria-selected={spreadType === "daily"}
               >
-                Daily Draw (1 Card)
+                Daily Draw
               </button>
               <button
                 className={`ritual-tab ${spreadType === "three-card" ? "is-active" : ""}`}
@@ -571,7 +571,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
                 role="tab"
                 aria-selected={spreadType === "three-card"}
               >
-                Timeline (3 Cards)
+                Timeline
               </button>
               <button
                 className={`ritual-tab ${spreadType === "choices" ? "is-active" : ""}`}
@@ -580,7 +580,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
                 role="tab"
                 aria-selected={spreadType === "choices"}
               >
-                Crossroads (2 Cards)
+                Crossroads
               </button>
             </div>
           </div>
@@ -595,12 +595,12 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
           
           {/* INTRO: Shuffle Action */}
           {ritualState === "intro" && (
-            <div style={{ textAlign: "center", zIndex: 10 }}>
+            <div style={{ textAlign: "center", zIndex: 10, width: "100%" }}>
               <div className="stage__glow" style={{ position: "relative", margin: "0 auto", transform: "none", filter: "blur(40px)", opacity: 0.6 }} />
-              <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginBottom: "40px", marginTop: "-160px" }}>
-                <span className="deck__card deck__card--one" style={{ position: "relative", transform: "rotate(-8deg) translateX(-15px)" }} />
-                <span className="deck__card deck__card--two" style={{ position: "relative", transform: "translateY(-10px)" }} />
-                <span className="deck__card deck__card--three" style={{ position: "relative", transform: "rotate(8deg) translateX(15px)" }} />
+              <div className="intro-deck-stack">
+                <span className="intro-deck-card intro-deck-card--one" />
+                <span className="intro-deck-card intro-deck-card--two" />
+                <span className="intro-deck-card intro-deck-card--three" />
               </div>
               <button className="button button--primary" onClick={handleStartRitual} type="button">
                 Shuffle & Begin Spread
@@ -610,7 +610,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
 
           {/* SHUFFLING: Animated Swaying Deck Stack */}
           {ritualState === "shuffling" && (
-            <div className="stage is-shuffling" style={{ minHeight: "560px", width: "100%" }}>
+            <div className="stage is-shuffling" style={{ width: "100%" }}>
               <div className="stage__glow" />
               <div className="mystical-shuffle-deck">
                 {Array.from({ length: 8 }).map((_, idx) => (
