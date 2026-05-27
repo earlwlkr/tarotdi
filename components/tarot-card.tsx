@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useState, type CSSProperties } from "react";
+import { forwardRef, useState, useEffect, type CSSProperties } from "react";
 import type { TarotCard } from "@/lib/tarot";
 
 type TarotCardProps = {
@@ -483,8 +483,14 @@ export const TarotCardFace = forwardRef<HTMLElement, TarotCardProps>(function Ta
 ) {
   const [isHovering, setIsHovering] = useState(false);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, mx: 50, my: 50 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
+    if (isTouchDevice) return;
     const cardElement = e.currentTarget;
     const rect = cardElement.getBoundingClientRect();
     const x = e.clientX - rect.left; // x position within card element.

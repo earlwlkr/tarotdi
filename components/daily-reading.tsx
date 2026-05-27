@@ -228,6 +228,13 @@ class MysticalAudioSynth {
       this.playDrone();
     }
   }
+
+  resumeContext() {
+    this.init();
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume().catch((e) => console.warn("Failed to resume AudioContext", e));
+    }
+  }
 }
 
 // Instantiate sound synth singleton (client-side only)
@@ -313,8 +320,20 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
     if (synth && !isAudioMuted) synth.playCardSweep();
   }
 
+  function handleToggleMute() {
+    const nextMuteState = !isAudioMuted;
+    setIsAudioMuted(nextMuteState);
+    if (synth) {
+      synth.resumeContext();
+      synth.setMute(nextMuteState);
+    }
+  }
+
   // --- RITUAL HANDLERS ---
   function handleSelectSpread(type: SpreadType) {
+    if (synth) {
+      synth.resumeContext();
+    }
     if (ritualState === "shuffling" || ritualState === "drawing") return;
     setSpreadType(type);
     setRitualState("intro");
@@ -325,6 +344,9 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
   }
 
   function handleStartRitual() {
+    if (synth) {
+      synth.resumeContext();
+    }
     setRitualState("shuffling");
     setDrawnCards([]);
     setDrawnFanIndices([]);
@@ -334,6 +356,9 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
     if (!soundInitialized.current) {
       setIsAudioMuted(false);
       soundInitialized.current = true;
+      if (synth) {
+        synth.setMute(false);
+      }
     } else if (synth && !isAudioMuted) {
       synth.playDrone();
     }
@@ -353,6 +378,9 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
 
   // Card Draw Handler
   function handleDrawCard(fanIndex: number) {
+    if (synth) {
+      synth.resumeContext();
+    }
     if (ritualState !== "drawing") return;
     if (drawnFanIndices.includes(fanIndex)) return;
 
@@ -402,6 +430,9 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
 
   // Card Flip Reveal Handler
   function handleFlipReveal(slotIdx: number) {
+    if (synth) {
+      synth.resumeContext();
+    }
     if (ritualState !== "complete") return;
     if (drawnCards[slotIdx].revealed) {
       setActiveDrawnIndex(slotIdx);
@@ -510,7 +541,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
       <div className="audio-controller" aria-label="Audio controls">
         <button
           className="audio-btn"
-          onClick={() => setIsAudioMuted(!isAudioMuted)}
+          onClick={handleToggleMute}
           type="button"
           title={isAudioMuted ? "Unmute soundscape" : "Mute soundscape"}
         >
@@ -541,20 +572,20 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
       </button>
 
       {/* Main Altar Screen Container */}
-      <div style={{ maxWidth: "1140px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "40px" }}>
+      <div style={{ maxWidth: "1140px", margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
         
         {/* Intro Hero Box */}
-        <section className="hero-copy" style={{ textAlign: "center", paddingBottom: "36px" }}>
-          <p className="eyebrow">Interactive Divination</p>
-          <h1 style={{ fontSize: "clamp(2.6rem, 5.5vw, 4.4rem)" }}>The Ritual Altar</h1>
+        <section className="hero-copy" style={{ textAlign: "center", padding: "16px 20px", borderRadius: "24px" }}>
+          <p className="eyebrow" style={{ marginBottom: "8px" }}>Interactive Divination</p>
+          <h1 style={{ fontSize: "clamp(2.1rem, 4.5vw, 3.4rem)" }}>The Ritual Altar</h1>
           
-          <p className="lede" style={{ margin: "16px auto 32px", maxWidth: "42rem" }}>
+          <p className="lede" style={{ margin: "8px auto 16px", maxWidth: "42rem", fontSize: "0.95rem", lineHeight: "1.6" }}>
             Align your intent, choose your sacred spread, and interactively draw your cards from the fanned deck to begin the ritual.
           </p>
 
           {/* Symmetrical Spread Selection Tabs */}
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <div className="ritual-selector" role="tablist">
+            <div className="ritual-selector" role="tablist" style={{ marginBottom: "12px" }}>
               <button
                 className={`ritual-tab ${spreadType === "daily" ? "is-active" : ""}`}
                 onClick={() => handleSelectSpread("daily")}
@@ -585,18 +616,18 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "12px" }}>
-            <span>{currentFormattedDate}</span>
+          <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "4px" }}>
+            <span style={{ fontSize: "0.85rem" }}>{currentFormattedDate}</span>
           </div>
         </section>
 
         {/* 3D Dynamic Ritual Stage */}
-        <section className="hero-copy" style={{ padding: "40px 24px", minHeight: "560px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
+        <section className="hero-copy" style={{ padding: "16px 16px", minHeight: "460px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", overflow: "hidden", borderRadius: "24px" }}>
           
           {/* INTRO: Shuffle Action */}
           {ritualState === "intro" && (
-            <div style={{ textAlign: "center", zIndex: 10, width: "100%" }}>
-              <div className="stage__glow" style={{ position: "relative", margin: "0 auto", transform: "none", filter: "blur(40px)", opacity: 0.6 }} />
+            <div style={{ textAlign: "center", zIndex: 10, width: "100%", position: "relative" }}>
+              <div className="stage__glow" style={{ position: "absolute", left: "50%", top: "45%", transform: "translate(-50%, -50%) scale(0.8)", filter: "blur(40px)", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />
               <div className="intro-deck-stack">
                 <span className="intro-deck-card intro-deck-card--one" />
                 <span className="intro-deck-card intro-deck-card--two" />
@@ -711,7 +742,7 @@ export function DailyReadingExperience({ reading, formattedDate }: DailyReadingP
                 {drawnCards.map((draw, idx) => (
                   <div key={idx} className="spread-slot" onClick={() => handleFlipReveal(idx)}>
                     {draw.slotLabel && <span className="spread-slot-label">{draw.slotLabel}</span>}
-                    <div style={{ cursor: "pointer", transition: "transform 200ms ease" }} className={activeDrawnIndex === idx ? "slot-card-active" : ""}>
+                    <div style={{ cursor: "pointer", transition: "transform 200ms ease", width: "100%", display: "flex", justifyContent: "center" }} className={activeDrawnIndex === idx ? "slot-card-active" : ""}>
                       <TarotCardFace
                         ref={activeDrawnIndex === idx ? revealedCardRef : null}
                         card={draw.card}
